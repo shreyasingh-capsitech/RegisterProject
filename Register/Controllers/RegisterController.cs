@@ -34,7 +34,7 @@ namespace Register.Controllers
         public async Task<IActionResult> Update([FromForm] RegisterRequestModel newRegister, string id) => await SaveRegister(newRegister, id);
 
         [HttpPost()]
-        public async Task<IActionResult> SaveRegister([FromForm] RegisterRequestModel newRegister, string? id = "")
+        public async Task<IActionResult> SaveRegister([FromForm] RegisterRequestModel newRegister, string? id)
         {
             if (id != null)
             {

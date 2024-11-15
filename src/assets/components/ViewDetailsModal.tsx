@@ -23,8 +23,22 @@ const ViewDetailsModal = ({ isOpen, onDismiss, recordId }: any) => {
           passportNumber: data.passportNumber || "",
           mobileNumber: data.mobileNumber || "",
           aadhaarNumber: data.aadhaarNumber || "",
-          presentAddress: data.presentAddress || "",
-          permanentAddress: data.permanentAddress || "",
+          // presentAddress: {
+          //   house: data?.presentAddress?.house || '',
+          //   street: data?.presentAddress?.street || '',
+          //   city: data?.presentAddress?.city || '',
+          //   district: data?.presentAddress?.district || '',
+          //   state: data?.presentAddress?.state || '',
+          //   pincode: data?.presentAddress?.pincode || 0,
+          // },
+          // permanentAddress: {
+          //   house: data?.permanentAddress?.house || '',
+          //   street: data?.permanentAddress?.street || '',
+          //   city: data?.permanentAddress?.city || '',
+          //   district: data?.permanentAddress?.district || '',
+          //   state: data?.permanentAddress?.state || '',
+          //   pincode: data?.permanentAddress?.pincode || 0,
+          // },
           fatherName: data.fatherName || "",
           bloodGroup: data.bloodGroup || 0,
           maritalStatus: data.maritalStatus || 0,
@@ -96,13 +110,13 @@ const ViewDetailsModal = ({ isOpen, onDismiss, recordId }: any) => {
         <Stack>
         <Stack horizontal tokens={{childrenGap: 15}}>
           <Label>Present Address</Label>
-          <Text>{recordDetails.presentAddress}</Text>
+          <Text>{recordDetails?.presentAddress?.house || ''}, {recordDetails?.presentAddress?.street || ''}, {recordDetails?.presentAddress?.city || ''}, {recordDetails?.presentAddress?.state || ''} - {recordDetails?.presentAddress?.pincode}</Text>
           </Stack>
         </Stack>
         <Stack>
         <Stack horizontal tokens={{childrenGap: 15}}>
           <Label>Candidate Image</Label>
-          <Text>{recordDetails.permanentAddress}</Text>
+          <Text>{recordDetails.c_img}</Text>
           </Stack>
         </Stack>
         </Stack>
@@ -152,7 +166,7 @@ const ViewDetailsModal = ({ isOpen, onDismiss, recordId }: any) => {
         <Stack>
         <Stack horizontal tokens={{childrenGap: 15}}>
           <Label>Permanent Address</Label>
-          <Text>{recordDetails.permanentAddress}</Text>
+          <Text>{recordDetails?.permanentAddress?.house}, {recordDetails?.permanentAddress?.street}, {recordDetails?.permanentAddress?.city}, {recordDetails?.permanentAddress?.state} - {recordDetails?.permanentAddress?.pincode}</Text>
           </Stack>
         </Stack>
         <Stack>

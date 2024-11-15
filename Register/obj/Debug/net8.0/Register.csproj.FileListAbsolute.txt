@@ -43,3 +43,4 @@ C:\Users\CT_USER\Desktop\Project\Register\Register\Register\obj\Debug\net8.0\ref
 C:\Users\CT_USER\Desktop\Project\Register\Register\Register\obj\Debug\net8.0\Register.pdb
 C:\Users\CT_USER\Desktop\Project\Register\Register\Register\obj\Debug\net8.0\Register.genruntimeconfig.cache
 C:\Users\CT_USER\Desktop\Project\Register\Register\Register\obj\Debug\net8.0\ref\Register.dll
+C:\Users\CT_USER\Desktop\Project\Register\Register\Register\obj\Debug\net8.0\Register.sourcelink.json

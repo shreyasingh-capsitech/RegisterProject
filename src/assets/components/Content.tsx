@@ -61,13 +61,13 @@ const Content = () => {
         id: item.id || '',
         candidateImage: item.candidateImage || '',  // Assuming 'c_img' holds image URL
         employeeName: item.employeeName || '',
-        permanentAddress: {
-          house: item.permanentAddress.house || '',
-          street: item.permanentAddress.street || '',
-          city: item.permanentAddress.city || '',
-          district: item.permanentAddress.district || '',
-          state: item.permanentAddress.state || '',
-          pincode: item.permanentAddress.pincode || 0,
+        presentAddress: {
+          house: item.presentAddress.house || '',
+          street: item.presentAddress.street || '',
+          city: item.presentAddress.city || '',
+          district: item.presentAddress.district || '',
+          state: item.presentAddress.state || '',
+          pincode: item.presentAddress.pincode || 0,
         },
         mobileNumber: item.mobileNumber?.toString() || '',
         email: item.email || '',
@@ -122,7 +122,7 @@ console.log("itemId",itemId);
     {
       key: "column4",
       name: "Address",
-      onRender:((itm)=> `${itm?.permanentAddress?.house},${itm?.permanentAddress?.street}`),
+      onRender:((itm)=> `${itm?.presentAddress?.house}, ${itm?.presentAddress?.street}, ${itm?.presentAddress?.city}, ${itm?.presentAddress?.state} - ${itm?.presentAddress?.pincode}`),
       minWidth: 100,
       maxWidth: 200,
       isResizable: true,

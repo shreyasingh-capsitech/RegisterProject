@@ -30,7 +30,7 @@ import * as Yup from "yup";
 const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: any) => {
   const [dismissPanel, setDismissPanel] = React.useState<boolean>(false);
   const [initialValues, setInitialValues] = React.useState<any>({
-    id: "",
+    //id: "",
     employeeName: "",
     birthDate: new Date(),
     gender: 0,
@@ -166,15 +166,29 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
       if (itemId !== "") { // Only fetch data if `itemId` is set
         const data = await get(itemId); // Fetch data from API
         setInitialValues({
-          id: data.id,
+          //id: data.id,
           employeeName: data.employeeName || "",
           birthDate: new Date(data.birthDate) || new Date(),
           gender: data.gender || 0,
           passportNumber: data.passportNumber || "",
           mobileNumber: data.mobileNumber || "",
           aadhaarNumber: data.aadhaarNumber || "",
-          presentAddress: data.presentAddress || "",
-          permanentAddress: data.permanentAddress || "",
+          presentAddress: {
+            house: data.presentAddress.house || '',
+            street: data.presentAddress.street || '',
+            city: data.presentAddress.city || '',
+            district: data.presentAddress.district || '',
+            state: data.presentAddress.state || '',
+            pincode: data.presentAddress.pincode || 0,
+          },
+          permanentAddress: {
+            house: data.permanentAddress.house || '',
+            street: data.permanentAddress.street || '',
+            city: data.permanentAddress.city || '',
+            district: data.permanentAddress.district || '',
+            state: data.permanentAddress.state || '',
+            pincode: data.permanentAddress.pincode || 0,
+          },
           fatherName: data.fatherName || "",
           bloodGroup: data.bloodGroup || 0,
           maritalStatus: data.maritalStatus || 0,
