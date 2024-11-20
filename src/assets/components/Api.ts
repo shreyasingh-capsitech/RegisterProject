@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseUrl = "https://localhost:7267/api/Register";
 
-export const getList = async (search?: string) => {
+export const getList = async (search: string) => {
     try {
       const response = await axios.get(`${baseUrl}`, {params: {search}});
       return response.data;
@@ -35,7 +35,11 @@ export const getList = async (search?: string) => {
 
   export const updateRegister = async (detailList: any, id: string) => {
     try {
-      const response = await axios.post(`${baseUrl}/update/${id}`, detailList);
+      const response = await axios.post(`${baseUrl}/update/${id}`, detailList,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -74,4 +78,16 @@ export enum Role
 {
     Employee,
     Student
+}
+
+export enum BloodGroup {
+  UNKNOWN = 'Unknown', // Optional value in case you need to handle missing or unknown data
+  A_POSITIVE = 'A+',
+  A_NEGATIVE = 'A-',
+  B_POSITIVE = 'B+',
+  B_NEGATIVE = 'B-',
+  AB_POSITIVE = 'AB+',
+  AB_NEGATIVE = 'AB-',
+  O_POSITIVE = 'O+',
+  O_NEGATIVE = 'O-',
 }

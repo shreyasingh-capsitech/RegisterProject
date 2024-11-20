@@ -11,7 +11,7 @@ const App = () => {
     <div>
        <Stack horizontal >
       <Navbar />
-      <Stack verticalFill styles={{root: { width: 1400, height: 'auto' }}} >
+      <Stack verticalFill styles={{root: { width: 'auto', height: 'auto' }}} >
       <Header />
       <Content />
       </Stack>

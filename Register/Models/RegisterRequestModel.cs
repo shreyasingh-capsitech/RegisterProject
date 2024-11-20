@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Register.Models
 {
+    [BsonIgnoreExtraElements]
     public class RegisterRequestModel
     {
         [BsonId]
@@ -120,7 +121,36 @@ namespace Register.Models
         Student
     }
 
-    [BsonIgnoreExtraElements]
+    public enum BloodGroup
+    {
+        [Display(Name = "Unknown")]
+        UNKNOWN,
+
+        [Display(Name = "A+")]
+        A_POSITIVE,
+
+        [Display(Name = "A-")]
+        A_NEGATIVE,
+
+        [Display(Name = "B+")]
+        B_POSITIVE,
+
+        [Display(Name = "B-")]
+        B_NEGATIVE,
+
+        [Display(Name = "AB+")]
+        AB_POSITIVE,
+
+        [Display(Name = "AB-")]
+        AB_NEGATIVE,
+
+        [Display(Name = "O+")]
+        O_POSITIVE,
+
+        [Display(Name = "O-")]
+        O_NEGATIVE,
+    }
+
     public class BankDetails
     {
         [BsonElement("accountNumber")]
@@ -147,8 +177,6 @@ namespace Register.Models
         [BsonIgnoreIfNull, BsonIgnoreIfDefault]
         public string? BankAddress { get; set; }
     }
-
-    [BsonIgnoreExtraElements]
 
     public class Address
     {

@@ -1,4 +1,4 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿/*using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
 namespace Register.Models
@@ -83,3 +83,4 @@ namespace Register.Models
         public BankDetails? BankDetails { get; set; }
     }
 }
+*/

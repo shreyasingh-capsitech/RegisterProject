@@ -42,9 +42,9 @@ namespace Register.Services
         public async Task<RegisterRequestModel?> GetAsync(string RegId, string? search = null) =>
             await _registerCollection.Find(x => x.Id == RegId).FirstOrDefaultAsync();
 
-        public async Task CreateAsync(RegisterRequestModel newRegister, string? RegId = "")
+        public async Task CreateAsync(RegisterRequestModel newRegister, string? RegId = null)
         {
-            if (RegId != "")
+            if (RegId != null)
             {
                 await _registerCollection.ReplaceOneAsync(x => x.Id == RegId, newRegister);
             }

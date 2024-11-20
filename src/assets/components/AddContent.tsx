@@ -13,70 +13,68 @@ import {
   IDropdownOption,
   defaultDatePickerStrings,
   Checkbox,
-  ActionButton,
-  values,
 } from "@fluentui/react";
-import React, { useEffect } from "react";
-import { Gender, get, MaritalStatus, Role, saveRegister, Status, updateRegister } from "./Api";
-import {
-  FieldArray,
+import React, { useRef } from "react";
+import { BloodGroup, Gender, MaritalStatus, Role, saveRegister, Status, updateRegister } from "./Api";
+import { 
   Formik,
-  FormikHelpers,
-  FormikValues,
-  useFormik,
+  useFormikContext
 } from "formik";
 import * as Yup from "yup";
 
-const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: any) => {
+const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId }: {openPanel: boolean, setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>, setTrigger: React.Dispatch<React.SetStateAction<boolean>>, initialValues: any, itemId: string}) => {
   const [dismissPanel, setDismissPanel] = React.useState<boolean>(false);
-  const [initialValues, setInitialValues] = React.useState<any>({
-    //id: "",
-    employeeName: "",
-    birthDate: new Date(),
-    gender: 0,
-    passportNumber: '',
-    mobileNumber: '',
-    aadhaarNumber: '',
-    presentAddress: {
-      house: '',
-      street: '',
-      city: '',
-      district: '',
-      state: '',
-      pincode: 0
-    },
-    permanentAddress: {
-      house: '',
-      street: '',
-      city: '',
-      district: '',
-      state: '',
-      pincode: 0
-    },
-    fatherName: "",
-    bloodGroup: '',
-    maritalStatus: 0,
-    status: 0,
-    cardNumber: '',
-    role: 0,
-    email: "",
-    candidateImage: "",
-    candidateSignature: "",
-    deletedStatus: 0,
-    bankDetails: {
-      accountNumber: '',
-      accountHolderName: "",
-      panNumber: '',
-      bankName: "",
-      ifscCode: '',
-      bankAddress: "",
-    },
-  });
+  const [isChecked, setIsChecked] = React.useState<boolean>(false);
+  const [formValues, setFormValues] = React.useState(initialValues);
+  //const formikRef = useRef<any>(null);
+  const { setFieldValue } = useFormikContext();
+  //const [imageUrl, setImageUrl] = React.useState<string>(values.candidateImage || "");
+  const [imageUrl, setImageUrl] = React.useState<string>("");
+  //const [signatureUrl, setSignatureUrl] = React.useState<string>(values.candidateSignature || "");
+  const [signatureUrl, setSignatureUrl] = React.useState<string>("");
+
 
   const inputStyle = {
     root: {
       width: 300,
     },
+  };
+
+  const handleCheckboxChange = () => {
+    setIsChecked((prev) => {
+      const newChecked = !prev;
+      if (newChecked) {
+        // When checked, copy present address values to permanent address
+        setFieldValue("permanentAddress.house", formValues.presentAddress.house);
+        setFieldValue("permanentAddress.street", formValues.presentAddress.street);
+        setFieldValue("permanentAddress.city", formValues.presentAddress.city);
+        setFieldValue("permanentAddress.district", formValues.presentAddress.district);
+        setFieldValue("permanentAddress.state", formValues.presentAddress.state);
+        setFieldValue("permanentAddress.pincode", formValues.presentAddress.pincode);
+      } else {
+        // If unchecked, clear the permanent address values or retain empty fields
+        setFieldValue("permanentAddress.house", "");
+        setFieldValue("permanentAddress.street", "");
+        setFieldValue("permanentAddress.city", "");
+        setFieldValue("permanentAddress.district", "");
+        setFieldValue("permanentAddress.state", "");
+        setFieldValue("permanentAddress.pincode", 0);
+      }
+      return newChecked;
+    });
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
+      setFieldValue(field, fileUrl); // Update Formik state with the new file URL
+      if (field === "candidateImage") {
+        setImageUrl(fileUrl); // Set the image URL for preview
+      } else if (field === "candidateSignature") {
+        setSignatureUrl(fileUrl); // Set the signature URL for preview
+      }
+    }
   };
 
   // Validation Schema
@@ -95,148 +93,75 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
       .required("Email is required"),
   });
 
-  // const { values, errors, handleChange, handleBlur, handleSubmit } = useFormik({
-  //   initialValues: initialValues,
-  //   validationSchema: validationSchema,
-  //   onSubmit: (values) => console.log(values),
-  // });
-
-  // const onRenderFooterContent = React.useCallback(
-  //   () => (
-
-  //   ),
-  //   [dismissPanel]
-  // );
-
   const genderOptions: IDropdownOption[] = [
-    { key: 0, text: Gender[0] },
-    { key: 1, text: Gender[1] },
+    { key: Gender.Male, text: Gender[0] },
+    { key: Gender.Female, text: Gender[1] },
   ];
  
-  
-
   const bloodGroupOptions: IDropdownOption[] = [
-    { key: 0, text: "O+" },
-    { key: 1, text: "O-" },
-    { key: 2, text: "A+" },
-    { key: 3, text: "A-" },
-    { key: 4, text: "B+" },
-    { key: 5, text: "B-" },
-    { key: 6, text: "AB+" },
-    { key: 7, text: "AB-" },
+    { key: BloodGroup.UNKNOWN, text: "Select" },
+    { key: BloodGroup.O_POSITIVE, text: "O+" },
+    { key: BloodGroup.O_NEGATIVE, text: "O-" },
+    { key: BloodGroup.A_POSITIVE, text: "A+" },
+    { key: BloodGroup.A_NEGATIVE, text: "A-" },
+    { key: BloodGroup.B_POSITIVE, text: "B+" },
+    { key: BloodGroup.B_NEGATIVE, text: "B-" },
+    { key: BloodGroup.AB_POSITIVE, text: "AB+" },
+    { key: BloodGroup.AB_NEGATIVE, text: "AB-" },
   ];
 
   const maritalStatusOptions: IDropdownOption[] = [
-    { key: MaritalStatus.Married, text: MaritalStatus[0] },
-    { key: MaritalStatus.Unmarried, text: MaritalStatus[1] },
-    { key: MaritalStatus.Single, text: MaritalStatus[2] },
+    { key: MaritalStatus.Married, text: 'Married' },
+    { key: MaritalStatus.Unmarried, text: 'Unmarried' },
+    { key: MaritalStatus.Single, text: 'Single' },
   ];
 
   const statusOptions: IDropdownOption[] = [
-    { key: Status.Active, text: Status[0] },
-    { key: Status.Inactive, text: Status[1] },
+    { key: Status.Active, text: 'Active' },
+    { key: Status.Inactive, text: 'Inactive' },
   ];
 
   const roleOptions: IDropdownOption[] = [
-    { key: Role.Employee, text: Role[0] },
-    { key: Role.Student, text: Role[1] },
+    { key: Role.Employee, text: 'Employee' },
+    { key: Role.Student, text: 'Student' },
   ];
 
   const buttonStyles = { root: { marginRight: 8 } };
 
-  const handleSave = async (DetailsList: any) => {
-    if(itemId !== ""){
-      await updateRegister(DetailsList,itemId);
-      console.log("Updated  Successfully", );
-      setitemId("");
+  React.useEffect(() => {
+    if (itemId && openPanel) {
+      console.log("Editing Item ID:", itemId);
+      setFormValues(initialValues); // Set form values when the panel is opened
+    }
+  }, [itemId, openPanel, initialValues]); // Trigger whenever itemId or initialValues change
+
+  // Function to handle form submission
+  const handleSave = async (values: any) => {
+    console.log("Saving values:", values);
+    console.log("Item Id:", itemId);
+    if(itemId){
+      await updateRegister(values, itemId);
     }
     else{
-      await saveRegister({...DetailsList, birthDate: new Date()});
-      console.log("Saved Successfully");
+      await saveRegister(values);
     }
-    setTrigger((prev: boolean) => !prev);
-    setOpenPanel(false);
-  };
-
-  useEffect(() => {
-  if(itemId !== ""){
-    console.log("editId",itemId);
- 
-    const setData = async () => {
-      if (itemId !== "") { // Only fetch data if `itemId` is set
-        const data = await get(itemId); // Fetch data from API
-        setInitialValues({
-          //id: data.id,
-          employeeName: data.employeeName || "",
-          birthDate: new Date(data.birthDate) || new Date(),
-          gender: data.gender || 0,
-          passportNumber: data.passportNumber || "",
-          mobileNumber: data.mobileNumber || "",
-          aadhaarNumber: data.aadhaarNumber || "",
-          presentAddress: {
-            house: data.presentAddress.house || '',
-            street: data.presentAddress.street || '',
-            city: data.presentAddress.city || '',
-            district: data.presentAddress.district || '',
-            state: data.presentAddress.state || '',
-            pincode: data.presentAddress.pincode || 0,
-          },
-          permanentAddress: {
-            house: data.permanentAddress.house || '',
-            street: data.permanentAddress.street || '',
-            city: data.permanentAddress.city || '',
-            district: data.permanentAddress.district || '',
-            state: data.permanentAddress.state || '',
-            pincode: data.permanentAddress.pincode || 0,
-          },
-          fatherName: data.fatherName || "",
-          bloodGroup: data.bloodGroup || 0,
-          maritalStatus: data.maritalStatus || 0,
-          status: data.status || 0,
-          cardNumber: data.cardNumber || "",
-          role: data.role || 0,
-          email: data.email || "",
-          candidateImage: data.candidateImage || "",
-          candidateSignature: data.candidateSignature || "",
-          deletedStatus: data.deletedStatus || 0,
-          bankDetails: {
-            accountNumber: data.bankDetails?.accountNumber || "",
-            accountHolderName: data.bankDetails?.accountHolderName || "",
-            panNumber: data.bankDetails?.panNumber || "",
-            bankName: data.bankDetails?.bankName || "",
-            ifscCode: data.bankDetails?.ifscCode || "",
-            bankAddress: data.bankDetails?.bankAddress || "",
-          },
-        });
-      } 
-    };
-  setData();
-}
-}, [itemId])
-
-  
-// const handleEdit = async (DetailsList: any, itemId: string) => {
-    
-//     await updateRegister(DetailsList,itemId);
-//     console.log("Updated  Successfully", );
-//     setTrigger((prev: boolean) => !prev);
-//   };
-  
+    setTrigger((prev: any) => !prev);  
+    setOpenPanel(false);     
+  };  
 
   return (
     <div className="RegisterPanel">
       <Panel
-        isOpen={openPanel}
-        //onDismiss={() => dismissPanel}
-        //closeButtonAriaLabel="Close"
-        hasCloseButton={false}
-        //onRenderFooterContent={onRenderFooterContent}
-        type={PanelType.large}
-        isFooterAtBottom={true}
+         isOpen={openPanel}
+         hasCloseButton={false}
+         type={PanelType.large}
+         isFooterAtBottom={true}
       >
         <Formik
-          initialValues={initialValues}
+          enableReinitialize={true}  // This ensures form gets reinitialized when initialValues change
+          initialValues={formValues}
           validationSchema={validationSchema}
+          //innerRef={formikRef}
           onSubmit={(values) => handleSave(values)}
         >
           {({
@@ -248,6 +173,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
             setFieldValue,
             resetForm,
           }) => {
+            console.log("Form Values:", values);
             return (
               <form onSubmit={handleSubmit}>
                 <Stack>
@@ -287,7 +213,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           paddingRight: 8,
                         }}
                         onClick={() => {
-                          setDismissPanel(!dismissPanel), setOpenPanel(false)
+                          setDismissPanel(!dismissPanel); setOpenPanel(false);
                         }}
                       />
                     </Stack>
@@ -320,17 +246,11 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           ariaLabel="Select a date"
                           strings={defaultDatePickerStrings}
                           styles={inputStyle}
-                          value={values.date}
+                          value={values.birthDate}
                           //errorMessage={errors.birthDate}
-                          id="date"
+                          id="birthDate"
                           onChange={handleChange}
-                          onBlur={handleBlur}
-                          onSelectDate={(date) =>
-                            setInitialValues({
-                              ...initialValues,
-                              birthDate: date,
-                            })
-                          }
+                          onBlur={handleBlur}       
                         />
                       </Stack>
                       <Stack horizontal>
@@ -338,7 +258,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                         <Dropdown
                           placeholder="Select an option"
                           options={genderOptions}
-                          // selectedKey={values.gender}
+                          selectedKey={values.gender}
                           id="gender"
                           onBlur={handleBlur}
                           // onChange={(e, option) => handleChange({ target: { name: option?.text, value: option?.key } })}
@@ -391,15 +311,33 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           Candidate's Photo
                         </Label>
 
-                        <TextField
-                          prefix="Choose file"
-                          placeholder="No file Chosen"
-                          value={values.c_img}
-                          name="c_img"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          styles={inputStyle}
-                        />
+                        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt="Candidate's Photo"
+            style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' }}
+          />
+        ) : (
+          <>
+            <TextField
+              prefix="Choose file"
+              placeholder="No file Chosen"
+              value={values.candidateImage}
+              onBlur={handleBlur}
+              styles={{ root: { width: 200 } }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e, "candidateImage")}
+              style={{ display: "none" }} // Hide the default file input
+              id="candidateImage"
+            />
+            <label htmlFor="candidateImage">
+              <PrimaryButton text="Choose file" />
+            </label>
+          </>
+        )}
                       </Stack>
                     </Stack>
                     <Stack tokens={{ childrenGap: 10 }}>
@@ -412,6 +350,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           styles={inputStyle}
                           name="fatherName"
                           value={values.fatherName}
+                          errorMessage={errors.fatherName?.toString()}
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
@@ -423,7 +362,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                         <Dropdown
                           placeholder="Select an option"
                           options={bloodGroupOptions}
-                          //selectedKey={values.bloodGroup}
+                          selectedKey={values.bloodGroup}
                           id="bloodGroup"
                           onBlur={handleBlur}
                           //onChange={(e, option) => handleChange({ target: { name: option?.text, value: option?.key } })}
@@ -441,7 +380,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                         <Dropdown
                           placeholder="Select an option"
                           options={maritalStatusOptions}
-                          //selectedKey={values.maritalStatus}
+                          selectedKey={values.maritalStatus}
                           id="maritalStatus"
                           onBlur={handleBlur}
                           //onChange={(e, option) => handleChange({ target: { name: option?.text, value: option?.key } })}
@@ -475,7 +414,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                             onChange={(e, o) => setFieldValue("status", o?.key)}
                             id="status"
                             onBlur={handleBlur}
-                            //selectedKey={values.status}
+                            selectedKey={values.status}
                             styles={{ root: { width: 75 } }}
                           />
                           <TextField
@@ -490,7 +429,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                             onBlur={handleBlur}
                             onChange={(e, o) => setFieldValue("role", o?.key)}
                             id="role"
-                            //selectedKey={values.role}
+                            selectedKey={values.role}
                             styles={{ root: { width: 75 } }}
                           />
                         </Stack>
@@ -523,6 +462,8 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           <Checkbox
                             label="Same as present address"
                             styles={{ root: { paddingTop: 10 } }}
+                            checked={isChecked}
+                            onChange={handleCheckboxChange}
                           />
                         </Stack>
                       </Stack>
@@ -531,15 +472,33 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                           Candidate's Signature
                         </Label>
 
-                        <TextField
-                          prefix="Choose file"
-                          placeholder="No file Chosen"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          name="candidateSignature"
-                          value={values.candidateSignature}
-                          styles={inputStyle}
-                        />
+                        {signatureUrl ? (
+          <img
+            src={signatureUrl}
+            alt="Candidate's Signature"
+            style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' }}
+          />
+        ) : (
+          <>
+            <TextField
+              prefix="Choose file"
+              placeholder="No file Chosen"
+              value={values.candidateSignature}
+              onBlur={handleBlur}
+              styles={{ root: { width: 200 } }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e, "candidateSignature")}
+              style={{ display: "none" }} // Hide the default file input
+              id="candidateSignature"
+            />
+            <label htmlFor="candidateSignature">
+              <PrimaryButton text="Choose file" />
+            </label>
+          </>
+        )}
                       </Stack>
                     </Stack>
                   </Stack>
@@ -631,9 +590,9 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, itemId, setitemId }: 
                       </Stack>
                     </Stack>
                   </Stack>
-                  <Stack horizontal styles={{root: {paddingTop: 200}}}>
+                  <Stack horizontal styles={{root: {paddingTop: 50}}}>
                     <PrimaryButton
-                      text={itemId !== "" ? "Edit" : "Submit" }
+                      text={itemId ? "Edit" : "Submit" }
                       type="submit"
                       onClick={() => 
                       {
