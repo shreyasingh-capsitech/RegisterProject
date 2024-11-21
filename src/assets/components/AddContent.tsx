@@ -14,25 +14,19 @@ import {
   defaultDatePickerStrings,
   Checkbox,
 } from "@fluentui/react";
-import React, { useRef } from "react";
+import React from "react";
 import { BloodGroup, Gender, MaritalStatus, Role, saveRegister, Status, updateRegister } from "./Api";
 import { 
-  Formik,
-  useFormikContext
+  Formik
 } from "formik";
 import * as Yup from "yup";
 
 const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId }: {openPanel: boolean, setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>, setTrigger: React.Dispatch<React.SetStateAction<boolean>>, initialValues: any, itemId: string}) => {
   const [dismissPanel, setDismissPanel] = React.useState<boolean>(false);
   const [isChecked, setIsChecked] = React.useState<boolean>(false);
-  const [formValues, setFormValues] = React.useState(initialValues);
-  //const formikRef = useRef<any>(null);
-  const { setFieldValue } = useFormikContext();
-  //const [imageUrl, setImageUrl] = React.useState<string>(values.candidateImage || "");
-  const [imageUrl, setImageUrl] = React.useState<string>("");
-  //const [signatureUrl, setSignatureUrl] = React.useState<string>(values.candidateSignature || "");
-  const [signatureUrl, setSignatureUrl] = React.useState<string>("");
-
+  const [formValues, setFormValues] = React.useState(initialValues);  
+  const [imageUrl, setImageUrl] = React.useState<string>("https://www.elections.ab.ca/uploads/Candidate.png");
+  const [signatureUrl, setSignatureUrl] = React.useState<string>("https://static.vecteezy.com/system/resources/previews/025/866/349/non_2x/fake-autograph-samples-hand-drawn-signatures-examples-of-documents-certificates-and-contracts-with-inked-and-handwritten-lettering-vector.jpg");
 
   const inputStyle = {
     root: {
@@ -40,39 +34,44 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
     },
   };
 
-  const handleCheckboxChange = () => {
-    setIsChecked((prev) => {
-      const newChecked = !prev;
-      if (newChecked) {
-        // When checked, copy present address values to permanent address
-        setFieldValue("permanentAddress.house", formValues.presentAddress.house);
-        setFieldValue("permanentAddress.street", formValues.presentAddress.street);
-        setFieldValue("permanentAddress.city", formValues.presentAddress.city);
-        setFieldValue("permanentAddress.district", formValues.presentAddress.district);
-        setFieldValue("permanentAddress.state", formValues.presentAddress.state);
-        setFieldValue("permanentAddress.pincode", formValues.presentAddress.pincode);
-      } else {
-        // If unchecked, clear the permanent address values or retain empty fields
-        setFieldValue("permanentAddress.house", "");
-        setFieldValue("permanentAddress.street", "");
-        setFieldValue("permanentAddress.city", "");
-        setFieldValue("permanentAddress.district", "");
-        setFieldValue("permanentAddress.state", "");
-        setFieldValue("permanentAddress.pincode", 0);
-      }
-      return newChecked;
-    });
+  const handleCheckboxChange = (
+    setFieldValue: any,
+    presentAddress: any,
+    checked: boolean
+  ) => {
+    setIsChecked(checked);
+    if (checked) {
+      setFieldValue("permanentAddress.house", presentAddress.house);
+      setFieldValue("permanentAddress.street", presentAddress.street);
+      setFieldValue("permanentAddress.city", presentAddress.city);
+      setFieldValue("permanentAddress.district", presentAddress.district);
+      setFieldValue("permanentAddress.state", presentAddress.state);
+      setFieldValue("permanentAddress.pincode", presentAddress.pincode);
+    } else {
+      setFieldValue("permanentAddress", {
+        house: "",
+        street: "",
+        city: "",
+        district: "",
+        state: "",
+        pincode: 0,
+      });
+    }
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: any,
+    field: string
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
-      setFieldValue(field, fileUrl); // Update Formik state with the new file URL
+      setFieldValue(field, fileUrl); 
       if (field === "candidateImage") {
-        setImageUrl(fileUrl); // Set the image URL for preview
+        setImageUrl(fileUrl); 
       } else if (field === "candidateSignature") {
-        setSignatureUrl(fileUrl); // Set the signature URL for preview
+        setSignatureUrl(fileUrl); 
       }
     }
   };
@@ -131,14 +130,12 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
   React.useEffect(() => {
     if (itemId && openPanel) {
       console.log("Editing Item ID:", itemId);
-      setFormValues(initialValues); // Set form values when the panel is opened
+      setFormValues(initialValues);
     }
-  }, [itemId, openPanel, initialValues]); // Trigger whenever itemId or initialValues change
+  }, [itemId, openPanel, initialValues]); 
 
   // Function to handle form submission
   const handleSave = async (values: any) => {
-    console.log("Saving values:", values);
-    console.log("Item Id:", itemId);
     if(itemId){
       await updateRegister(values, itemId);
     }
@@ -161,7 +158,6 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
           enableReinitialize={true}  // This ensures form gets reinitialized when initialValues change
           initialValues={formValues}
           validationSchema={validationSchema}
-          //innerRef={formikRef}
           onSubmit={(values) => handleSave(values)}
         >
           {({
@@ -172,8 +168,8 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
             handleSubmit,
             setFieldValue,
             resetForm,
-          }) => {
-            console.log("Form Values:", values);
+          }: any) => {
+          
             return (
               <form onSubmit={handleSubmit}>
                 <Stack>
@@ -212,8 +208,10 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                           cursor: "pointer",
                           paddingRight: 8,
                         }}
-                        onClick={() => {
-                          setDismissPanel(!dismissPanel); setOpenPanel(false);
+                        onClick={() => {                    
+                          setFormValues(initialValues);
+                          setDismissPanel(!dismissPanel); 
+                          setOpenPanel(false);
                         }}
                       />
                     </Stack>
@@ -230,7 +228,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         </Label>
                         <TextField
                           name="employeeName"
-                          errorMessage={errors.employeeName?.toString()}
+                          errorMessage={errors.employeeName}
                           value={values.employeeName}
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -287,7 +285,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         <TextField
                           onChange={handleChange}
                           name="mobileNumber"
-                          errorMessage={errors.mobileNumber?.toString()}
+                          errorMessage={errors.mobileNumber}
                           value={values.mobileNumber}
                           onBlur={handleBlur}
                           styles={inputStyle}
@@ -312,32 +310,32 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         </Label>
 
                         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Candidate's Photo"
-            style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' }}
-          />
-        ) : (
-          <>
-            <TextField
-              prefix="Choose file"
-              placeholder="No file Chosen"
-              value={values.candidateImage}
-              onBlur={handleBlur}
-              styles={{ root: { width: 200 } }}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e, "candidateImage")}
-              style={{ display: "none" }} // Hide the default file input
-              id="candidateImage"
-            />
-            <label htmlFor="candidateImage">
-              <PrimaryButton text="Choose file" />
-            </label>
-          </>
-        )}
+                <img
+                  src={imageUrl}
+                  alt="Candidate's Photo"
+                  style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" }}
+                />
+              ) : (
+                <>
+                  <TextField
+                    prefix="Choose file"
+                    placeholder="No file Chosen"
+                    value={values.candidateImage}
+                    onBlur={handleBlur}
+                    styles={{ root: { width: 200 } }}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e, setFieldValue, "candidateImage")}
+                    style={{ display: "none" }}
+                    id="candidateImage"
+                  />
+                  <label htmlFor="candidateImage">
+                    <PrimaryButton text="Choose file" />
+                  </label>
+                </>
+              )}
                       </Stack>
                     </Stack>
                     <Stack tokens={{ childrenGap: 10 }}>
@@ -350,7 +348,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                           styles={inputStyle}
                           name="fatherName"
                           value={values.fatherName}
-                          errorMessage={errors.fatherName?.toString()}
+                          errorMessage={errors.fatherName}
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
@@ -398,7 +396,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         <TextField
                           styles={inputStyle}
                           name="aadhaarNumber"
-                          errorMessage={errors.aadhaarNumber?.toString()}
+                          errorMessage={errors.aadhaarNumber}
                           value={values.aadhaarNumber}
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -440,7 +438,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         <TextField
                           styles={inputStyle}
                           value={values.email}
-                          errorMessage={errors.email?.toString()}
+                          errorMessage={errors.email}
                           name="email"
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -462,8 +460,10 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                           <Checkbox
                             label="Same as present address"
                             styles={{ root: { paddingTop: 10 } }}
-                            checked={isChecked}
-                            onChange={handleCheckboxChange}
+                            checked={isChecked || false}
+                  onChange={(e, checked) =>
+                    handleCheckboxChange(setFieldValue, values.presentAddress, checked || false)
+                  }
                           />
                         </Stack>
                       </Stack>
@@ -473,32 +473,32 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                         </Label>
 
                         {signatureUrl ? (
-          <img
-            src={signatureUrl}
-            alt="Candidate's Signature"
-            style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%' }}
-          />
-        ) : (
-          <>
-            <TextField
-              prefix="Choose file"
-              placeholder="No file Chosen"
-              value={values.candidateSignature}
-              onBlur={handleBlur}
-              styles={{ root: { width: 200 } }}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e, "candidateSignature")}
-              style={{ display: "none" }} // Hide the default file input
-              id="candidateSignature"
-            />
-            <label htmlFor="candidateSignature">
-              <PrimaryButton text="Choose file" />
-            </label>
-          </>
-        )}
+                <img
+                  src={signatureUrl}
+                  alt="Candidate's Signature"
+                  style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" }}
+                />
+              ) : (
+                <>
+                  <TextField
+                    prefix="Choose file"
+                    placeholder="No file Chosen"
+                    value={values.candidateSignature}
+                    onBlur={handleBlur}
+                    styles={{ root: { width: 200 } }}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e, setFieldValue, "candidateSignature")}
+                    style={{ display: "none" }}
+                    id="candidateSignature"
+                  />
+                  <label htmlFor="candidateSignature">
+                    <PrimaryButton text="Choose file" />
+                  </label>
+                </>
+              )}
                       </Stack>
                     </Stack>
                   </Stack>
@@ -597,7 +597,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                       onClick={() => 
                       {
                       setDismissPanel(!dismissPanel),
-                      setOpenPanel(false),
+                      setOpenPanel(false);
                       resetForm
                       }}
                       styles={buttonStyles}
@@ -606,7 +606,9 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
                     <DefaultButton
                     text="Cancel"
                      onClick={() => {
-                        setDismissPanel(!dismissPanel), setOpenPanel(false), resetForm;
+                      setFormValues(initialValues);
+                        setDismissPanel(!dismissPanel), setOpenPanel(false);
+                        resetForm;
                       }}/>
                    
                   </Stack>

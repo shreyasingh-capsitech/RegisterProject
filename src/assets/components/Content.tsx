@@ -39,7 +39,7 @@ const Content = () => {
   const [search,setSearch] = React.useState<string>("");
   const [openPanel,setOpenPanel] = React.useState<boolean>(false);
   const [isModalOpen,setIsModalOpen] = React.useState<boolean>(false);
-  const [itemId,setitemId] = React.useState<string>("");
+  const [itemId,setItemId] = React.useState<string>("");
   const [recordId,setRecordId] = React.useState<string>("");
   const [trigger,setTrigger] = React.useState<boolean>(false);
   // const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
@@ -75,10 +75,8 @@ const Content = () => {
     cardNumber: '',
     role: 0,
     email: "",
-    candidateImage: "",
-    //https://www.elections.ab.ca/uploads/Candidate.png
-    candidateSignature: "",
-    // https://static.vecteezy.com/system/resources/previews/025/866/349/non_2x/fake-autograph-samples-hand-drawn-signatures-examples-of-documents-certificates-and-contracts-with-inked-and-handwritten-lettering-vector.jpg
+    candidateImage: "https://www.elections.ab.ca/uploads/Candidate.png",    
+    candidateSignature: "https://static.vecteezy.com/system/resources/previews/025/866/349/non_2x/fake-autograph-samples-hand-drawn-signatures-examples-of-documents-certificates-and-contracts-with-inked-and-handwritten-lettering-vector.jpg",    
     deletedStatus: 0,
     bankDetails: {
       accountNumber: '',
@@ -135,7 +133,7 @@ const Content = () => {
     
     const data = await get(id);
   
-    setitemId(id);
+    setItemId(id);
     setOpenPanel(true); 
     setRecordId(id);   
   
@@ -184,13 +182,18 @@ const Content = () => {
     });
   };
 
-  const handleAddClick = () => {
-
-    setitemId("");
-    setOpenPanel(true);    
-    setTrigger((prev) => !prev); 
+  useEffect(() => {
+    console.log("itemId has been updated:", itemId);
+    if (!itemId) {
+    handleAddClick();
+    }
+  }, [itemId]);  // This effect will run every time itemId changes
   
+
+  const handleAddClick = () => {   
+
     setInitialValues({
+
       employeeName: "",
       birthDate: new Date(),
       gender: 0,
@@ -232,6 +235,7 @@ const Content = () => {
         bankAddress: "",
       },
     });
+
   };
 
   const column: IColumn[] = [
@@ -255,8 +259,8 @@ const Content = () => {
           {/* Render image if `candidateImage` exists, otherwise show a placeholder */}
           {item?.candidateImage ? (
             <img
-              src={item.candidateImage}
-              alt="Candidate"
+              src={item?.candidateImage}
+              alt="candidateImage"
               style={{
                 width: 50, // Adjust size as needed
                 height: 50, // Adjust size as needed
@@ -355,7 +359,7 @@ const Content = () => {
             style={{ borderRadius: 5, backgroundColor: "#006BFF" }}
             iconProps={{iconName: 'Add'}}
             text="Add"
-            onClick={() => handleAddClick()}
+            onClick={() => {setItemId(""); setOpenPanel(true); setTrigger((prev) => !prev);}}
           />
           <SearchBox
             placeholder="Search"

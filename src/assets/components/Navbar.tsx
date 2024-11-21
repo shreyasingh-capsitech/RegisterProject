@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Nav,
   INavLink,
@@ -26,7 +27,7 @@ const Navbar = () => {
       links: [
         {
           name: "Dashboard",
-          url: "/",
+          url: "/dashboard",
           key: "key7",
           iconProps: {
             iconName: "ViewDashboard",
@@ -41,7 +42,7 @@ const Navbar = () => {
         },
         {
           name: "Leaves",
-          url: "/",
+          url: "/dashboard/leaves",
           key: "key7",
           iconProps: {
             iconName: "EventDateMissed12",
@@ -56,7 +57,7 @@ const Navbar = () => {
         },
         {
           name: "Attendance Request",
-          url: "/",
+          url: "/dashboard/attendance-request",
           key: "key7",
           iconProps: {
             iconName: "AddEvent",
@@ -71,7 +72,7 @@ const Navbar = () => {
         },
         {
           name: "Reports",
-          url: "/",
+          url: "/dashboard/reports",
           key: "key7",
           iconProps: {
             iconName: "ReportAdd",
@@ -86,7 +87,7 @@ const Navbar = () => {
         },
         {
           name: "Events",
-          url: "/",
+          url: "/dashboard/events",
           key: "key7",
           iconProps: {
             iconName: "SpecialEvent",
@@ -101,7 +102,7 @@ const Navbar = () => {
         },
         {
           name: "Company policies",
-          url: "/",
+          url: "/dashboard/company-policies",
           key: "key7",
           iconProps: {
             iconName: "AddToShoppingList",

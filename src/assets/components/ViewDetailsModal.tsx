@@ -128,7 +128,33 @@ const textStyle = {
         <Stack>
         <Stack horizontal tokens={{childrenGap: 15}}>
           <Label>Candidate Image</Label>
-          <Text styles={textStyle}>{recordDetails.c_img}</Text>
+          {recordDetails?.candidateImage ? (
+            <img
+              src={recordDetails?.candidateImage}
+              alt="candidateImage"
+              style={{
+                width: 50, 
+                height: 50, 
+                objectFit: "cover",
+                borderRadius: "50%", // Makes the image circular
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: "50%",
+                backgroundColor: "#e0e0e0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+              }}
+            >
+              No Image
+            </div>
+          )}
           </Stack>
         </Stack>
         </Stack>
@@ -184,7 +210,33 @@ const textStyle = {
         <Stack>
         <Stack horizontal tokens={{childrenGap: 15}}>
           <Label>Candidate Signature</Label>
-          <Text styles={textStyle}>{recordDetails.candidateImage}</Text>
+          {recordDetails?.candidateSignature ? (
+            <img
+              src={recordDetails?.candidateSignature}
+              alt="candidateSignature"
+              style={{
+                width: 50, 
+                height: 50, 
+                objectFit: "cover",
+                borderRadius: "50%", // Makes the image circular
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: "50%",
+                backgroundColor: "#e0e0e0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+              }}
+            >
+              No Image
+            </div>
+          )}
           </Stack>
         </Stack>
         </Stack>
