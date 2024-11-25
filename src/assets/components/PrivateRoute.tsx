@@ -5,7 +5,7 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { token } = useAuth(); // Get the token from context
   if (!token) {
     // If no token, redirect to the login page
-    return <Link to="/login" />;
+    return <Link to="/" />;
   }
   return children;
 };

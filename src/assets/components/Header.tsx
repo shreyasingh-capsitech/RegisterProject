@@ -20,7 +20,7 @@ const Header = () => {
       key: 'Log Out',
       text: 'Log Out',
       iconProps: {iconName: 'SignOut', styles: {root: {color: 'red'}}},
-      onClick: () => navigate('/login'),
+      onClick: () => navigate('/'),
     }
   ];
 
