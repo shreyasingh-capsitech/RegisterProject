@@ -21,9 +21,9 @@ import {
 } from "formik";
 import * as Yup from "yup";
 
-const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId }: {openPanel: boolean, setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>, setTrigger: React.Dispatch<React.SetStateAction<boolean>>, initialValues: any, itemId: string}) => {
+const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId, isChecked, setIsChecked }: {openPanel: boolean, setOpenPanel: React.Dispatch<React.SetStateAction<boolean>>, setTrigger: React.Dispatch<React.SetStateAction<boolean>>, initialValues: any, itemId: string, isChecked: boolean, setIsChecked: React.Dispatch<React.SetStateAction<boolean>>}) => {
   const [dismissPanel, setDismissPanel] = React.useState<boolean>(false);
-  const [isChecked, setIsChecked] = React.useState<boolean>(false);
+  //const [isChecked, setIsChecked] = React.useState<boolean>(false);
   const [formValues, setFormValues] = React.useState(initialValues);  
   const [imageUrl, setImageUrl] = React.useState<string>("https://www.elections.ab.ca/uploads/Candidate.png");
   const [signatureUrl, setSignatureUrl] = React.useState<string>("https://static.vecteezy.com/system/resources/previews/025/866/349/non_2x/fake-autograph-samples-hand-drawn-signatures-examples-of-documents-certificates-and-contracts-with-inked-and-handwritten-lettering-vector.jpg");
@@ -47,6 +47,7 @@ const AddContent = ({ openPanel, setOpenPanel, setTrigger, initialValues, itemId
       setFieldValue("permanentAddress.district", presentAddress.district);
       setFieldValue("permanentAddress.state", presentAddress.state);
       setFieldValue("permanentAddress.pincode", presentAddress.pincode);
+      setIsChecked(true);
     } else {
       setFieldValue("permanentAddress", {
         house: "",

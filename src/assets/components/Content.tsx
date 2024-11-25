@@ -42,6 +42,7 @@ const Content = () => {
   const [itemId,setItemId] = React.useState<string>("");
   const [recordId,setRecordId] = React.useState<string>("");
   const [trigger,setTrigger] = React.useState<boolean>(false);
+  const [isChecked, setIsChecked] = React.useState<boolean>(false);
   // const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] =
   //   useBoolean(false);
   const [initialValues, setInitialValues] = React.useState<any>({
@@ -68,6 +69,7 @@ const Content = () => {
       state: '',
       pincode: '',
     },
+    isChecked: false,
     fatherName: "",
     bloodGroup: 0,
     maritalStatus: 0,
@@ -161,6 +163,7 @@ const Content = () => {
         state: data.permanentAddress?.state ?? '',
         pincode: data.permanentAddress?.pincode ?? 0,
       },
+      isChecked: data.isChecked ?? false,
       fatherName: data.fatherName ?? "",
       bloodGroup: data.bloodGroup ?? 0,
       maritalStatus: data.maritalStatus ?? 0,
@@ -182,16 +185,15 @@ const Content = () => {
     });
   };
 
-  useEffect(() => {
-    console.log("itemId has been updated:", itemId);
-    if (!itemId) {
-    handleAddClick();
-    }
-  }, [itemId]);  // This effect will run every time itemId changes
+  // useEffect(() => {
+    
+  //   handleAddClick();
+   
+  // }, [itemId]);  // This effect will run every time itemId changes
   
 
   const handleAddClick = () => {   
-
+    //setItemId("");
     setInitialValues({
 
       employeeName: "",
@@ -216,6 +218,7 @@ const Content = () => {
         state: '',
         pincode: 0,
       },
+      isChecked: false,
       fatherName: "",
       bloodGroup: 0,
       maritalStatus: 0,
@@ -359,7 +362,7 @@ const Content = () => {
             style={{ borderRadius: 5, backgroundColor: "#006BFF" }}
             iconProps={{iconName: 'Add'}}
             text="Add"
-            onClick={() => {setItemId(""); setOpenPanel(true); setTrigger((prev) => !prev);}}
+            onClick={() => {setItemId(""); setOpenPanel(true); setTrigger((prev) => !prev); handleAddClick();}}
           />
           <SearchBox
             placeholder="Search"
@@ -382,7 +385,9 @@ const Content = () => {
   setOpenPanel={setOpenPanel} 
   setTrigger={setTrigger}
   initialValues={initialValues}   // Pass initial values here
-  itemId={itemId}                 // Pass itemId (ID of the record being edited)
+  itemId={itemId}  
+  isChecked={isChecked}
+  setIsChecked={setIsChecked}             // Pass itemId (ID of the record being edited)
 />
       <ViewDetailsModal
   isOpen={isModalOpen}

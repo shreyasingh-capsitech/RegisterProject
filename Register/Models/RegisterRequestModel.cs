@@ -44,6 +44,9 @@ namespace Register.Models
         [BsonIgnoreIfNull, BsonIgnoreIfDefault]
         public Address? PermanentAddress { get; set; }
 
+        [BsonIgnoreIfNull, BsonIgnoreIfDefault]
+        public bool IsChecked { get; set; }
+
         [BsonElement("fatherName")]
         [BsonIgnoreIfNull, BsonIgnoreIfDefault]
         public string? FatherName { get; set; }
